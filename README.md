@@ -6,6 +6,12 @@ A powerful async select component for Laravel Livewire with Alpine.js - a modern
 [![Total Downloads](https://img.shields.io/packagist/dt/drpshtiwan/livewire-async-select.svg)](https://packagist.org/packages/drpshtiwan/livewire-async-select)
 [![License](https://img.shields.io/packagist/l/drpshtiwan/livewire-async-select.svg)](https://packagist.org/packages/drpshtiwan/livewire-async-select)
 
+## 🎥 Demo
+
+[![Livewire Async Select Demo](assets/async-select.png)](https://www.youtube.com/watch?v=xwfKgZu49gg)
+
+**[▶️ Watch Full Demo on YouTube](https://www.youtube.com/watch?v=xwfKgZu49gg)**
+
 ## ✨ Features
 
 - 🚀 **Asynchronous Loading** - Load options dynamically from API endpoints
