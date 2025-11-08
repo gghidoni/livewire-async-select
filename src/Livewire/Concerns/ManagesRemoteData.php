@@ -125,8 +125,67 @@ trait ManagesRemoteData
 
     protected function ensureLabelsForSelected(): void
     {
+        if (method_exists($this, 'processValueLabels')) {
+            $this->processValueLabels();
+        }
+
         $values = $this->selectedValues();
         $missing = array_values(array_filter($values, fn (string $value): bool => ! isset($this->optionCache[$value])));
+
+        if ($missing === []) {
+            return;
+        }
+
+        if (property_exists($this, 'valueLabels') && ! empty($this->valueLabels)) {
+            $processed = [];
+            foreach ($missing as $value) {
+                $valueKey = $this->keyForValue($value);
+                if ($valueKey === null) {
+                    continue;
+                }
+
+                $labelData = null;
+
+                if (isset($this->valueLabels[$valueKey])) {
+                    $labelData = $this->valueLabels[$valueKey];
+                } elseif (isset($this->valueLabels[$value])) {
+                    $labelData = $this->valueLabels[$value];
+                } else {
+                    foreach ($this->valueLabels as $key => $data) {
+                        $normalizedKey = $this->keyForValue($key);
+                        if ($normalizedKey === $valueKey || (string) $normalizedKey === (string) $valueKey || (string) $normalizedKey === (string) $value || (string) $key === (string) $value || (string) $key === (string) $valueKey) {
+                            $labelData = $data;
+                            break;
+                        }
+                    }
+                }
+
+                if ($labelData === null) {
+                    continue;
+                }
+
+                if (is_string($labelData) || is_numeric($labelData)) {
+                    $processed[$valueKey] = [
+                        'value' => $valueKey,
+                        'label' => (string) $labelData,
+                    ];
+                } elseif (is_array($labelData)) {
+                    $label = $labelData['label'] ?? $labelData['text'] ?? $valueKey;
+                    $processed[$valueKey] = [
+                        'value' => $valueKey,
+                        'label' => (string) $label,
+                    ];
+                    if (isset($labelData['image'])) {
+                        $processed[$valueKey]['image'] = (string) $labelData['image'];
+                    }
+                }
+            }
+
+            if (! empty($processed)) {
+                $this->cacheOptions($processed);
+                $missing = array_values(array_filter($missing, fn (string $value): bool => ! isset($this->optionCache[$value])));
+            }
+        }
 
         if ($missing === []) {
             return;

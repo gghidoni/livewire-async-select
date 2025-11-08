@@ -22,6 +22,7 @@ Complete reference for all component properties and methods.
 | `options` | array\|Collection | [] | Static options array or Laravel Collection (auto-converted) |
 | `endpoint` | string | null | API endpoint for async loading |
 | `selected-endpoint` | string | null | Endpoint for loading selected items |
+| `value-labels` | array | [] | Map of value => label (or value => [label, image]) for displaying labels without fetching from API |
 
 ### Behavior
 

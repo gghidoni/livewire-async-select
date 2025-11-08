@@ -92,6 +92,8 @@ class AsyncSelect extends Component
 
     public ?string $suffixButtonAction = null;
 
+    public array $valueLabels = [];
+
     public function mount(
         array|int|string|null $value = null,
         array|Collection $options = [],
@@ -119,6 +121,7 @@ class AsyncSelect extends Component
         bool $suffixButton = false,
         ?string $suffixButtonIcon = null,
         ?string $suffixButtonAction = null,
+        array $valueLabels = [],
     ): void {
         $this->endpoint = $endpoint;
         $this->multiple = $multiple;
@@ -142,11 +145,13 @@ class AsyncSelect extends Component
         $this->suffixButton = $suffixButton;
         $this->suffixButtonIcon = $suffixButtonIcon;
         $this->suffixButtonAction = $suffixButtonAction;
+        $this->valueLabels = $valueLabels;
         $this->locale = $locale ?? app()->getLocale();
         $this->configureRtl();
         $this->placeholder = $placeholder ?: __('async-select::async-select.select_option');
 
         $this->setOptions($options);
+        $this->processValueLabels();
 
         $initialValue = $value ?? $this->value;
         $this->setValue($initialValue);
@@ -165,6 +170,7 @@ class AsyncSelect extends Component
         }
 
         $this->rebuildOptionCache();
+        $this->processValueLabels();
 
         $this->setValue($this->value);
 
@@ -190,6 +196,14 @@ class AsyncSelect extends Component
     public function updatedValue($value): void
     {
         $this->setValue($value);
+        $this->processValueLabels();
+        $this->ensureLabelsForSelected();
+    }
+
+    public function updatedValueLabels(array $valueLabels): void
+    {
+        $this->valueLabels = $valueLabels;
+        $this->processValueLabels();
         $this->ensureLabelsForSelected();
     }
 
@@ -234,6 +248,44 @@ class AsyncSelect extends Component
             $this->dispatch($this->suffixButtonAction);
         } else {
             $this->dispatch('suffix-button-clicked');
+        }
+    }
+
+    protected function processValueLabels(): void
+    {
+        if (empty($this->valueLabels)) {
+            return;
+        }
+
+        $processed = [];
+
+        foreach ($this->valueLabels as $value => $labelData) {
+            $valueKey = $this->keyForValue($value);
+
+            if ($valueKey === null) {
+                continue;
+            }
+
+            if (is_string($labelData) || is_numeric($labelData)) {
+                $processed[$valueKey] = [
+                    'value' => $valueKey,
+                    'label' => (string) $labelData,
+                ];
+            } elseif (is_array($labelData)) {
+                $label = $labelData['label'] ?? $labelData['text'] ?? $valueKey;
+                $processed[$valueKey] = [
+                    'value' => $valueKey,
+                    'label' => (string) $label,
+                ];
+
+                if (isset($labelData['image'])) {
+                    $processed[$valueKey]['image'] = (string) $labelData['image'];
+                }
+            }
+        }
+
+        if (! empty($processed)) {
+            $this->cacheOptions($processed);
         }
     }
 

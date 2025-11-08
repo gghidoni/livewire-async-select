@@ -273,6 +273,135 @@ Route::get('/api/users/selected', function (Request $request) {
 The `selected-endpoint` is called automatically when the component mounts with a pre-selected value. This fetches the labels for display.
 :::
 
+### Using value-labels (Alternative to selected-endpoint)
+
+Instead of using a `selected-endpoint` to fetch labels, you can provide labels directly using the `value-labels` attribute. This is useful when you already know the labels and want to avoid an additional API call.
+
+**Use Case: Programmatically Setting Selected Values**
+
+For example, when you have a suffix button that adds users to the selection:
+
+**Livewire Component:**
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Attributes\On;
+use Livewire\Component;
+
+class UserSelector extends Component
+{
+    public $selectedUsers = [];
+    
+    #[On('addRecommendedUsers')]
+    public function addRecommendedUsers()
+    {
+        // Set selected user IDs
+        $this->selectedUsers = [
+            'john_doe',
+            'jane_smith',
+            'bob_wilson'
+        ];
+    }
+    
+    public function render()
+    {
+        return view('livewire.user-selector');
+    }
+}
+```
+
+**Blade View:**
+
+```html
+<livewire:async-select
+    wire:model="selectedUsers"
+    :multiple="true"
+    name="users"
+    endpoint="{{ route('api.users.search') }}"
+    :value-labels="[
+        'john_doe' => 'John Doe',
+        'jane_smith' => 'Jane Smith',
+        'bob_wilson' => 'Bob Wilson'
+    ]"
+    :min-search-length="3"
+    value-field="id"
+    label-field="name"
+    :per-page="20"
+    :autoload="false"
+    placeholder="Type at least 3 characters to search users..."
+    :suffix-button="true"
+    suffix-button-action="addRecommendedUsers"
+/>
+```
+
+When `addRecommendedUsers()` is called and sets the `selectedUsers` array, the component will automatically display the labels "John Doe", "Jane Smith", and "Bob Wilson" without needing to fetch them from the API.
+
+**Using value-labels with Images:**
+
+You can also provide images along with labels:
+
+```html
+<livewire:async-select
+    wire:model="selectedUsers"
+    :multiple="true"
+    name="users"
+    endpoint="{{ route('api.users.search') }}"
+    :value-labels="[
+        'john_doe' => [
+            'label' => 'John Doe',
+            'image' => 'https://example.com/avatars/john.jpg'
+        ],
+        'jane_smith' => 'Jane Smith',
+        'bob_wilson' => [
+            'label' => 'Bob Wilson',
+            'image' => 'https://example.com/avatars/bob.jpg'
+        ]
+    ]"
+    image-field="avatar"
+    ...
+/>
+```
+
+**Simple Format (Labels Only):**
+
+```html
+:value-labels="[
+    'user_1' => 'John Doe',
+    'user_2' => 'Jane Smith',
+    'user_3' => 'Bob Wilson'
+]"
+```
+
+**Extended Format (Labels with Images):**
+
+```html
+:value-labels="[
+    'user_1' => [
+        'label' => 'John Doe',
+        'image' => '/avatars/john.jpg'
+    ],
+    'user_2' => [
+        'label' => 'Jane Smith',
+        'image' => '/avatars/jane.jpg'
+    ]
+]"
+```
+
+::: tip When to Use value-labels vs selected-endpoint
+- **Use `value-labels`** when:
+  - You already know the labels (e.g., from previous API calls)
+  - You're programmatically setting values and want to avoid extra API calls
+  - The labels are static or known at render time
+  
+- **Use `selected-endpoint`** when:
+  - Labels need to be fetched from the server
+  - Labels might change and need to be up-to-date
+  - You want to keep the data source centralized
+:::
+
 ## Dynamic Defaults
 
 ### From Route Parameters

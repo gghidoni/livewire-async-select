@@ -73,7 +73,60 @@ trait HasComputedProperties
         $selected = [];
 
         foreach ($values as $value) {
-            $selected[] = $this->optionCache[$value] ?? [
+            if (isset($this->optionCache[$value])) {
+                $selected[] = $this->optionCache[$value];
+
+                continue;
+            }
+
+            $valueKey = $this->keyForValue($value);
+            $labelData = null;
+
+            if (property_exists($this, 'valueLabels') && ! empty($this->valueLabels)) {
+                if (isset($this->valueLabels[$valueKey])) {
+                    $labelData = $this->valueLabels[$valueKey];
+                } elseif (isset($this->valueLabels[$value])) {
+                    $labelData = $this->valueLabels[$value];
+                } else {
+                    foreach ($this->valueLabels as $key => $data) {
+                        $normalizedKey = $this->keyForValue($key);
+                        if ($normalizedKey === $valueKey || (string) $normalizedKey === (string) $valueKey || (string) $normalizedKey === (string) $value || (string) $key === (string) $value || (string) $key === (string) $valueKey) {
+                            $labelData = $data;
+                            break;
+                        }
+                    }
+                }
+
+                if ($labelData !== null) {
+                    if (is_string($labelData) || is_numeric($labelData)) {
+                        $option = [
+                            'value' => $valueKey,
+                            'label' => (string) $labelData,
+                        ];
+                    } elseif (is_array($labelData)) {
+                        $label = $labelData['label'] ?? $labelData['text'] ?? $valueKey;
+                        $option = [
+                            'value' => $valueKey,
+                            'label' => (string) $label,
+                        ];
+                        if (isset($labelData['image'])) {
+                            $option['image'] = (string) $labelData['image'];
+                        }
+                    } else {
+                        $option = [
+                            'value' => $valueKey,
+                            'label' => $valueKey,
+                        ];
+                    }
+
+                    $this->cacheOptions([$valueKey => $option]);
+                    $selected[] = $option;
+
+                    continue;
+                }
+            }
+
+            $selected[] = [
                 'value' => $value,
                 'label' => $value,
             ];

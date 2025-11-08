@@ -33,6 +33,102 @@ Route::get('/api/users/search', function (Request $request) {
 });
 ```
 
+## User Selection with Programmatic Value Setting
+
+Using `value-labels` to display user names when values are set programmatically:
+
+**Livewire Component:**
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Attributes\On;
+use Livewire\Component;
+
+class ProjectTeamSelector extends Component
+{
+    public $selectedUsers = [];
+    
+    #[On('addTeamMembers')]
+    public function addTeamMembers()
+    {
+        // Add recommended team members
+        $this->selectedUsers = [
+            'john_doe',
+            'jane_smith',
+            'bob_wilson'
+        ];
+    }
+    
+    public function render()
+    {
+        return view('livewire.project-team-selector');
+    }
+}
+```
+
+**Blade View:**
+
+```html
+<livewire:async-select
+    wire:model="selectedUsers"
+    :multiple="true"
+    name="team_members"
+    endpoint="{{ route('api.users.search') }}"
+    :value-labels="[
+        'john_doe' => 'John Doe',
+        'jane_smith' => 'Jane Smith',
+        'bob_wilson' => 'Bob Wilson'
+    ]"
+    :min-search-length="3"
+    value-field="id"
+    label-field="name"
+    :per-page="20"
+    :autoload="false"
+    placeholder="Type at least 3 characters to search users..."
+    :suffix-button="true"
+    suffix-button-action="addTeamMembers"
+/>
+```
+
+When the suffix button is clicked, the `addTeamMembers()` method sets the selected user IDs, and the component automatically displays "John Doe", "Jane Smith", and "Bob Wilson" without fetching from the API.
+
+**With User Avatars:**
+
+```html
+<livewire:async-select
+    wire:model="selectedUsers"
+    :multiple="true"
+    name="team_members"
+    endpoint="{{ route('api.users.search') }}"
+    :value-labels="[
+        'john_doe' => [
+            'label' => 'John Doe',
+            'image' => 'https://example.com/avatars/john.jpg'
+        ],
+        'jane_smith' => [
+            'label' => 'Jane Smith',
+            'image' => 'https://example.com/avatars/jane.jpg'
+        ],
+        'bob_wilson' => [
+            'label' => 'Bob Wilson',
+            'image' => 'https://example.com/avatars/bob.jpg'
+        ]
+    ]"
+    image-field="avatar"
+    :min-search-length="3"
+    value-field="id"
+    label-field="name"
+    :per-page="20"
+    :autoload="false"
+    placeholder="Type at least 3 characters to search users..."
+    :suffix-button="true"
+    suffix-button-action="addTeamMembers"
+/>
+```
+
 ## User Selection with Avatar and Email
 
 Custom slots to display rich user information:
