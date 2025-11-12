@@ -246,7 +246,7 @@ class ProjectForm extends Component
 
 ```php
 // For single selection
-Route::get('/api/categories/selected', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/categories/selected', function (Request $request) {
     $selected = $request->get('selected');
     
     $categories = Category::whereIn('id', (array) $selected)
@@ -260,7 +260,7 @@ Route::get('/api/categories/selected', function (Request $request) {
 });
 
 // For multiple selection
-Route::get('/api/users/selected', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/users/selected', function (Request $request) {
     $selected = $request->get('selected');
     
     // Split comma-separated IDs

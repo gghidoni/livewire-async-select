@@ -223,6 +223,44 @@
   background-image: none !important;
 }
 
+/* General SVG fixes for Bootstrap compatibility */
+.las-async-select-wrapper svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.las-async-select-wrapper button svg,
+.las-async-select-wrapper .las-icon-button svg {
+  pointer-events: none;
+}
+
+/* Ensure SVG sizing classes work correctly */
+.las-async-select-wrapper svg.las-h-3 {
+  height: 0.75rem;
+}
+
+.las-async-select-wrapper svg.las-w-3 {
+  width: 0.75rem;
+}
+
+.las-async-select-wrapper svg.las-h-4 {
+  height: 1rem;
+}
+
+.las-async-select-wrapper svg.las-w-4 {
+  width: 1rem;
+}
+
+.las-async-select-wrapper svg.las-h-5 {
+  height: 1.25rem;
+}
+
+.las-async-select-wrapper svg.las-w-5 {
+  width: 1.25rem;
+}
+
 /* Ensure Bootstrap modal z-index doesn't interfere */
 .las-async-select-wrapper .las-z-50 {
   z-index: 1050 !important; /* Higher than Bootstrap modal backdrop */
@@ -394,20 +432,153 @@
   background: #94a3b8;
 }
 
-#las-ui-bootstrap{
-  .las-search-input {
-    font-size: 1.1rem;
-  }
+#las-ui-bootstrap .las-search-input {
+  font-size: 1.1rem;
+}
 
-  .las-select-trigger {
-    font-size: 1.1rem;
-  }
+#las-ui-bootstrap .las-select-trigger {
+  font-size: 1.1rem;
+}
 
-  .las-option {
-    font-size: 1rem;
-  }
+#las-ui-bootstrap .las-option {
+  font-size: 1rem;
+}
 
-  .las-chip {
-    font-size: 0.875rem;
-  }
+#las-ui-bootstrap .las-chip {
+  font-size: 0.875rem;
+}
+
+/* Fix SVG icon display issues in Bootstrap */
+#las-ui-bootstrap svg {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  box-sizing: content-box !important;
+}
+
+/* Ensure SVG icons in buttons display properly */
+#las-ui-bootstrap button svg,
+#las-ui-bootstrap .las-icon-button svg {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  pointer-events: none !important;
+}
+
+/* Fix SVG sizing classes */
+#las-ui-bootstrap svg.las-h-3,
+#las-ui-bootstrap svg.las-w-3 {
+  width: 0.75rem !important;
+  height: 0.75rem !important;
+}
+
+#las-ui-bootstrap svg.las-h-4,
+#las-ui-bootstrap svg.las-w-4 {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+#las-ui-bootstrap svg.las-h-5,
+#las-ui-bootstrap svg.las-w-5 {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/* Ensure SVG paths and strokes are visible */
+#las-ui-bootstrap svg path {
+  stroke: currentColor !important;
+}
+
+/* For stroke-only icons, ensure fill is none */
+#las-ui-bootstrap svg[fill="none"] path {
+  fill: none !important;
+}
+
+/* Fix SVG in flex containers */
+#las-ui-bootstrap .las-flex svg {
+  flex-shrink: 0 !important;
+}
+
+/* Force checkbox borders to show in Bootstrap */
+#las-ui-bootstrap span.las-border {
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
+#las-ui-bootstrap span.las-border-gray-300 {
+  border-color: #d1d5db !important;
+}
+
+#las-ui-bootstrap span.las-border-primary-500 {
+  border-color: #3b82f6 !important;
+}
+
+/* Ensure images display properly in Bootstrap */
+#las-ui-bootstrap img {
+  display: inline-block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  vertical-align: middle !important;
+}
+
+/* Fix image sizing classes in Bootstrap (handle both prefixed and non-prefixed) */
+#las-ui-bootstrap img.h-4,
+#las-ui-bootstrap img.las-h-4 {
+  height: 1rem !important;
+}
+
+#las-ui-bootstrap img.w-4,
+#las-ui-bootstrap img.las-w-4 {
+  width: 1rem !important;
+}
+
+#las-ui-bootstrap img.h-6,
+#las-ui-bootstrap img.las-h-6 {
+  height: 1.5rem !important;
+}
+
+#las-ui-bootstrap img.w-6,
+#las-ui-bootstrap img.las-w-6 {
+  width: 1.5rem !important;
+}
+
+#las-ui-bootstrap img.h-8,
+#las-ui-bootstrap img.las-h-8 {
+  height: 2rem !important;
+}
+
+#las-ui-bootstrap img.w-8,
+#las-ui-bootstrap img.las-w-8 {
+  width: 2rem !important;
+}
+
+#las-ui-bootstrap img.h-10,
+#las-ui-bootstrap img.las-h-10 {
+  height: 2.5rem !important;
+}
+
+#las-ui-bootstrap img.w-10,
+#las-ui-bootstrap img.las-w-10 {
+  width: 2.5rem !important;
+}
+
+/* Ensure object-cover works in Bootstrap */
+#las-ui-bootstrap img.las-object-cover,
+#las-ui-bootstrap img.object-cover {
+  object-fit: cover !important;
+}
+
+/* Ensure rounded corners work */
+#las-ui-bootstrap img.las-rounded,
+#las-ui-bootstrap img.rounded {
+  border-radius: 0.25rem !important;
+}
+
+/* Ensure shrink-0 works */
+#las-ui-bootstrap img.las-shrink-0,
+#las-ui-bootstrap img.shrink-0 {
+  flex-shrink: 0 !important;
 }

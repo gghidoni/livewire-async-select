@@ -44,6 +44,16 @@ class AsyncSelectServiceProvider extends ServiceProvider
         ], 'async-select-lang');
 
         $this->registerBladeDirectives();
+        $this->registerMiddleware();
+    }
+
+    protected function registerMiddleware(): void
+    {
+        $router = $this->app['router'];
+
+        $middlewareClass = \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class;
+
+        $router->aliasMiddleware('async-auth', $middlewareClass);
     }
 
     protected function registerBladeDirectives(): void

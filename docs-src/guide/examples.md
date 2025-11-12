@@ -17,7 +17,7 @@ Simple user dropdown without customization:
 **API Endpoint:**
 
 ```php
-Route::get('/api/users/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/users/search', function (Request $request) {
     $search = $request->get('search', '');
     
     $users = User::query()
@@ -31,6 +31,24 @@ Route::get('/api/users/search', function (Request $request) {
     
     return response()->json(['data' => $users]);
 });
+```
+
+**Note:** The `async-auth` middleware is automatically registered by the package and works exactly like `auth` middleware, but also handles internal authentication automatically when the `X-Internal-User` header is present.
+
+**With different guards:**
+
+```php
+// Default guard (web)
+Route::middleware(['async-auth'])->get('/api/users/search', ...);
+
+// Sanctum
+Route::middleware(['async-auth:sanctum'])->get('/api/users/search', ...);
+
+// API guard
+Route::middleware(['async-auth:api'])->get('/api/users/search', ...);
+
+// Multiple guards (tries first, falls back to second)
+Route::middleware(['async-auth:web,sanctum'])->get('/api/users/search', ...);
 ```
 
 ## User Selection with Programmatic Value Setting
@@ -165,7 +183,7 @@ Custom slots to display rich user information:
 **API Endpoint:**
 
 ```php
-Route::get('/api/users/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/users/search', function (Request $request) {
     $search = $request->get('search', '');
     
     $users = User::query()
@@ -267,7 +285,7 @@ class AddressForm extends Component
 
 ```php
 // Countries
-Route::get('/api/countries/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/countries/search', function (Request $request) {
     $search = $request->get('search', '');
     
     $countries = Country::query()
@@ -284,7 +302,7 @@ Route::get('/api/countries/search', function (Request $request) {
 });
 
 // Cities (filtered by country)
-Route::get('/api/cities/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/cities/search', function (Request $request) {
     $search = $request->get('search', '');
     $countryId = $request->get('country_id');
     
@@ -462,7 +480,7 @@ Complex product selection with detailed information:
 **API Endpoint:**
 
 ```php
-Route::get('/api/products/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/products/search', function (Request $request) {
     $search = $request->get('search', '');
     
     $products = Product::with('category')

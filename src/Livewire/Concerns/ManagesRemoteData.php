@@ -41,18 +41,14 @@ trait ManagesRemoteData
         $this->errorMessage = null;
 
         try {
-            $http = Http::acceptJson()->timeout(5);
-            
-            $headers = $this->getHeadersWithInternalAuth($this->endpoint, 'GET');
-            if (! empty($headers)) {
-                $http = $http->withHeaders($headers);
-            }
-            
-            $response = $http->get($this->endpoint, array_merge($this->extraParams, [
-                $this->searchParam => $term,
-                'page' => $this->page,
-                'per_page' => $this->perPage,
-            ]));
+
+            $response = Http::acceptJson()->timeout(5)
+                ->withHeaders($this->getHeadersWithInternalAuth($this->endpoint, 'GET') ?? [])
+                ->get($this->endpoint, array_merge($this->extraParams, [
+                    $this->searchParam => $term,
+                    'page' => $this->page,
+                    'per_page' => $this->perPage,
+                ]));
 
             if (! $response->successful()) {
                 $this->errorMessage = 'Failed to load options. Please try again.';
@@ -107,12 +103,12 @@ trait ManagesRemoteData
 
         try {
             $http = Http::acceptJson()->timeout(5);
-            
+
             $headers = $this->getHeadersWithInternalAuth($endpoint, 'GET');
             if (! empty($headers)) {
                 $http = $http->withHeaders($headers);
             }
-            
+
             $response = $http->get($endpoint, array_merge($this->extraParams, [
                 $this->selectedParam => implode(',', $values),
             ]));
@@ -230,27 +226,28 @@ trait ManagesRemoteData
         }
 
         $parsed = parse_url($endpoint);
-        
+
         if (! isset($parsed['host'])) {
             return true;
         }
 
         $currentHost = Request::getHost();
         $currentScheme = Request::getScheme();
-        
+
         $endpointHost = strtolower($parsed['host'] ?? '');
         $currentHostLower = strtolower($currentHost);
-        
+
         if ($endpointHost !== $currentHostLower) {
             return false;
         }
-        
+
         if (isset($parsed['scheme'])) {
             $endpointScheme = strtolower($parsed['scheme']);
             $currentSchemeLower = strtolower($currentScheme);
+
             return $endpointScheme === $currentSchemeLower;
         }
-        
+
         return true;
     }
 
@@ -271,24 +268,25 @@ trait ManagesRemoteData
 
         try {
             $userId = Auth::id();
-            
+
             $parsed = parse_url($endpoint);
             $path = $parsed['path'] ?? '/';
-            
-            $host = isset($parsed['host']) ? ($parsed['scheme'] ?? 'http') . '://' . $parsed['host'] : null;
-            
+
+            $host = isset($parsed['host']) ? ($parsed['scheme'] ?? 'http').'://'.$parsed['host'] : null;
+
             $bodyHash = $body !== null ? hash('sha256', $body) : null;
-            
+
             $token = \DrPshtiwan\LivewireAsyncSelect\Support\InternalAuthToken::issue($userId, [
                 'm' => $method,
                 'p' => $path,
                 'h' => $host,
                 'bh' => $bodyHash,
             ]);
-            
+
             return $token;
         } catch (Throwable $e) {
             report($e);
+
             return null;
         }
     }
@@ -296,27 +294,26 @@ trait ManagesRemoteData
     protected function getHeadersWithInternalAuth(string $endpoint, string $method = 'GET', ?string $body = null): array
     {
         $headers = [];
-        
         if (property_exists($this, 'headers') && ! empty($this->headers)) {
             $headers = array_merge($headers, $this->headers);
         }
-        
-        if (property_exists($this, 'useInternalAuth') 
-            && $this->useInternalAuth 
+
+        if (property_exists($this, 'useInternalAuth')
+            && $this->useInternalAuth
             && isset($headers['Authorization'])) {
             unset($headers['Authorization']);
         }
-        
-        if (! isset($headers['X-Internal-User']) 
-            && property_exists($this, 'useInternalAuth') 
-            && $this->useInternalAuth 
+
+        if (! isset($headers['X-Internal-User'])
+            && property_exists($this, 'useInternalAuth')
+            && $this->useInternalAuth
             && $this->isInternalEndpoint($endpoint)) {
             $token = $this->generateInternalAuthToken($endpoint, $method, $body);
             if ($token !== null) {
                 $headers['X-Internal-User'] = $token;
             }
         }
-        
+
         return $headers;
     }
 }

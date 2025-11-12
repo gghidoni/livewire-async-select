@@ -80,6 +80,41 @@ php artisan vendor:publish --tag=async-select-assets
 />
 ```
 
+**API Route with async-auth middleware:**
+
+```php
+// Default guard (web)
+Route::middleware(['async-auth'])->get('/api/users/search', function (Request $request) {
+    $users = User::where('name', 'like', "%{$request->get('search')}%")
+        ->limit(20)
+        ->get();
+    
+    return response()->json(['data' => $users]);
+});
+
+// With Sanctum
+Route::middleware(['async-auth:sanctum'])->get('/api/users/search', function (Request $request) {
+    // Works with Sanctum tokens or internal auth
+    $users = User::where('name', 'like', "%{$request->get('search')}%")
+        ->limit(20)
+        ->get();
+    
+    return response()->json(['data' => $users]);
+});
+
+// With web guard and session persistence
+Route::middleware(['web', 'async-auth:web,persist'])->get('/api/users/search', function (Request $request) {
+    // Persists login in session
+    $users = User::where('name', 'like', "%{$request->get('search')}%")
+        ->limit(20)
+        ->get();
+    
+    return response()->json(['data' => $users]);
+});
+```
+
+The `async-auth` middleware is automatically registered and works exactly like `auth` middleware, but also handles internal authentication automatically when the `X-Internal-User` header is present. Supports all guards: `async-auth:web`, `async-auth:sanctum`, `async-auth:api`, etc.
+
 **[→ View full documentation](https://livewire-select.thejano.com/)**
 
 ## 📋 Requirements

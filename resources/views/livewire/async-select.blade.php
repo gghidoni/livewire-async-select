@@ -294,7 +294,7 @@
 
                             <button
                                 type="button"
-                                class="las-inline-flex las-items-center las-justify-center las-rounded-sm las-text-gray-500 hover:las-bg-gray-200 hover:las-text-gray-700 focus:las-outline-none"
+                                class="las-icon-button las-inline-flex las-items-center las-justify-center las-rounded-sm las-text-gray-500 hover:las-bg-gray-200 hover:las-text-gray-700 focus:las-outline-none"
                                 wire:click="clearSelection({{ Js::from($chipValue) }})"
                                 x-on:click.stop
                                 aria-label="{{ __('async-select::async-select.remove') }}"
@@ -377,7 +377,7 @@
             @if ($this->suffixButton)
                 <button
                     type="button"
-                    class="las-flex las-min-h-[40px] las-shrink-0 las-items-center las-justify-center {{ !$this->isRtl ? 'las-rounded-r-md las-rounded-l-none las-border-l-0' : 'las-rounded-l-md las-rounded-r-none las-border-r-0' }} las-border las-border-gray-300 las-bg-white las-px-3 las-text-sm las-font-medium las-text-gray-700 las-cursor-pointer las-transition-colors hover:las-bg-gray-50 hover:las-text-gray-900 hover:las-border-gray-400 focus:las-outline-none focus:las-ring-2 focus:las-ring-primary-500 focus:las-ring-offset-2"
+                    class="las-suffix-button las-flex las-min-h-[40px] las-shrink-0 las-items-center las-justify-center {{ !$this->isRtl ? 'las-rounded-r-md las-rounded-l-none las-border-l-0' : 'las-rounded-l-md las-rounded-r-none las-border-r-0' }} las-border las-border-gray-300 las-bg-white las-px-3 las-text-sm las-font-medium las-text-gray-700 las-cursor-pointer las-transition-colors hover:las-bg-gray-50 hover:las-text-gray-900 hover:las-border-gray-400 focus:las-outline-none focus:las-ring-2 focus:las-ring-primary-500 focus:las-ring-offset-2"
                     x-on:click.stop.prevent="handleSuffixButtonClick($event)"
                     title="{{ __('async-select::async-select.add') }}"
                 >

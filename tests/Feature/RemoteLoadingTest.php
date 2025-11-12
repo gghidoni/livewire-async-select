@@ -42,6 +42,7 @@ test('sends headers with API request', function () {
             'Authorization' => 'Bearer token123',
             'X-Custom-Header' => 'custom-value',
         ],
+        'useInternalAuth' => false,
         'autoload' => true,
     ]);
 
@@ -54,7 +55,7 @@ test('sends headers with API request', function () {
     // Verify headers were sent with the request
     $recorded = Http::recorded();
     expect($recorded)->not()->toBeEmpty();
-    
+
     $request = $recorded[0][0];
     expect($request->headers())->toHaveKey('Authorization');
     expect($request->headers())->toHaveKey('X-Custom-Header');

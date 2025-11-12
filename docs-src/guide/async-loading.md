@@ -17,13 +17,20 @@ Load options dynamically from your Laravel backend API endpoints.
 
 ### 2. Create the Controller
 
+::: warning Important: Middleware Required for Authentication
+**If your endpoint requires authentication, you MUST apply the `async-auth` middleware.** Without it, internal authentication tokens will not be verified and users will not be authenticated.
+
 ```php
 // routes/api.php or routes/web.php
 use App\Models\User;
 use Illuminate\Http\Request;
 
-Route::get('/api/users/search', function (Request $request) {
+// ✅ Apply middleware for authenticated routes
+Route::middleware(['async-auth'])->get('/api/users/search', function (Request $request) {
     $search = $request->get('search', '');
+    
+    // User is now authenticated (via internal auth or normal auth)
+    $user = auth()->user();
     
     $users = User::query()
         ->when($search, function($query, $search) {
@@ -43,6 +50,32 @@ Route::get('/api/users/search', function (Request $request) {
 
     return response()->json(['data' => $users]);
 });
+```
+
+**Note:** The `async-auth` middleware is automatically registered by the package and works exactly like `auth` middleware, but also handles internal authentication automatically when the `X-Internal-User` header is present.
+
+**Without middleware, authentication won't work:**
+```php
+// ❌ No middleware - authentication won't work
+Route::get('/api/users/search', function (Request $request) {
+    // auth()->user() will be null even if X-Internal-User header is present
+});
+```
+
+**Using with different guards:**
+
+```php
+// Default guard
+Route::middleware(['async-auth'])->get('/api/users/search', ...);
+
+// Sanctum
+Route::middleware(['async-auth:sanctum'])->get('/api/users/search', ...);
+
+// Web guard with session
+Route::middleware(['web', 'async-auth:web'])->get('/api/users/search', ...);
+
+// Multiple guards
+Route::middleware(['async-auth:web,sanctum'])->get('/api/users/search', ...);
 ```
 
 ## Response Format
@@ -157,7 +190,7 @@ Load selected items from an endpoint:
 The selected endpoint receives the current value:
 
 ```php
-Route::get('/api/users/selected', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/users/selected', function (Request $request) {
     $selected = $request->get('selected');
     
     $users = User::whereIn('id', (array) $selected)
@@ -171,6 +204,8 @@ Route::get('/api/users/selected', function (Request $request) {
     return response()->json(['data' => $users]);
 });
 ```
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+read_file
 
 ### Option 2: Using value-labels (No API Call)
 
@@ -356,7 +391,7 @@ The component automatically handles:
 Display user-friendly messages by catching errors in your endpoint:
 
 ```php
-Route::get('/api/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/search', function (Request $request) {
     try {
         // Your logic...
         return response()->json(['data' => $results]);
@@ -375,7 +410,7 @@ The component supports pagination for loading large datasets efficiently.
 ### Basic Pagination with `paginate()`
 
 ```php
-Route::get('/api/users/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/users/search', function (Request $request) {
     $search = $request->get('search', '');
     $page = $request->get('page', 1);
     $perPage = $request->get('per_page', 20);
@@ -411,7 +446,7 @@ Route::get('/api/users/search', function (Request $request) {
 The component automatically detects pagination and shows a "Load More" button:
 
 ```php
-Route::get('/api/products/search', function (Request $request) {
+Route::middleware(['async-auth'])->get('/api/products/search', function (Request $request) {
     $search = $request->get('search', '');
     $page = $request->get('page', 1);
     

@@ -146,10 +146,17 @@ Load options from an API endpoint:
 
 Create the endpoint in your routes:
 
+::: warning Important: Middleware Required for Authentication
+**If your endpoint requires authentication, you MUST apply the `async-auth` middleware.** Without it, internal authentication tokens will not be verified and users will not be authenticated.
+
 ```php
 // routes/api.php or routes/web.php
-Route::get('/api/users/search', function (Request $request) {
+// ✅ Apply middleware for authenticated routes
+Route::middleware(['async-auth'])->get('/api/users/search', function (Request $request) {
     $search = $request->get('search');
+    
+    // User is now authenticated (via internal auth or normal auth)
+    $user = auth()->user();
     
     $users = User::query()
         ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
@@ -162,6 +169,16 @@ Route::get('/api/users/search', function (Request $request) {
         ]);
 
     return response()->json(['data' => $users]);
+});
+```
+
+**Note:** The `async-auth` middleware is automatically registered and works exactly like `auth` middleware, but also handles internal authentication automatically when the `X-Internal-User` header is present.
+
+**Without middleware, authentication won't work:**
+```php
+// ❌ No middleware - authentication won't work
+Route::get('/api/users/search', function (Request $request) {
+    // auth()->user() will be null even if X-Internal-User header is present
 });
 ```
 

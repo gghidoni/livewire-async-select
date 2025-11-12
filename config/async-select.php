@@ -111,7 +111,7 @@ return [
     | internal endpoints. You can override this per-component if needed.
     |
     */
-    'use_internal_auth' => env('ASYNC_SELECT_USE_INTERNAL_AUTH', false),
+    'use_internal_auth' => env('ASYNC_SELECT_USE_INTERNAL_AUTH', true),
 
     /*
     |--------------------------------------------------------------------------

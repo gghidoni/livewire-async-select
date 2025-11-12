@@ -31,38 +31,33 @@ Or set in `.env`:
 ASYNC_SELECT_USE_INTERNAL_AUTH=true
 ```
 
-### Step 3: Register Middleware
+### Step 3: Apply async-auth Middleware to Routes
 
-**Laravel 11+ (`bootstrap/app.php`):**
+::: warning Important: Middleware Required for Authentication
+**You MUST apply the `async-auth` middleware to your API routes if you want authentication to work.** Without the middleware, internal authentication tokens will not be verified and users will not be authenticated.
 
-```php
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Middleware;
-
-return Application::configure(basePath: dirname(__DIR__))
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'async-select.internal' => \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class,
-        ]);
-    })
-    ->create();
-```
-
-**Laravel 10 (`App\Http\Kernel.php`):**
+The package automatically registers the `async-auth` middleware globally. You can use it instead of the regular `auth` middleware:
 
 ```php
-protected $middlewareAliases = [
-    'async-select.internal' => \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class,
-];
-```
-
-### Step 4: Apply Middleware to Routes
-
-```php
-Route::middleware(['async-select.internal'])->group(function () {
+Route::middleware(['async-auth'])->group(function () {
     Route::get('/api/users/search', [UserController::class, 'search']);
 });
 ```
+
+**For authenticated endpoints, always apply the middleware:**
+```php
+// ✅ Correct - Middleware applied
+Route::middleware(['async-auth'])->get('/api/users/search', ...);
+
+// ❌ Wrong - No middleware, authentication won't work
+Route::get('/api/users/search', ...);
+```
+
+The `async-auth` middleware:
+- Works exactly like `auth` middleware when no internal header is present
+- Automatically handles internal authentication when `X-Internal-User` header is present
+- Supports all guard specifications: `async-auth:web`, `async-auth:sanctum`, etc.
+- Supports additional flags: `async-auth:web,persist` for session persistence
 
 ### Step 5: Use Component
 
@@ -242,47 +237,52 @@ When enabled globally, **all** AsyncSelect components will automatically use int
 
 ### Middleware Setup
 
-#### Laravel 11+ (bootstrap/app.php)
+The package automatically registers the `async-auth` middleware. **No manual registration required!**
+
+::: warning Required for Authentication
+**You MUST apply the `async-auth` middleware to your routes for authentication to work.** The middleware verifies internal authentication tokens and authenticates users.
+
+The `async-auth` middleware is registered globally and can be used exactly like the `auth` middleware:
 
 ```php
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Middleware;
-
-return Application::configure(basePath: dirname(__DIR__))
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'async-select.internal' => \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class,
-        ]);
-    })
-    ->create();
+// ✅ Apply middleware for authenticated routes
+Route::middleware(['async-auth'])->get('/api/users/search', function () {
+    // User is automatically authenticated via internal auth token (if header present)
+    // Or via normal authentication (if no header)
+    $user = auth()->user();
+    
+    return response()->json([
+        'data' => User::where('name', 'like', "%{$request->get('search')}%")
+            ->get()
+            ->map(fn($u) => [
+                'value' => $u->id,
+                'label' => $u->name,
+            ])
+    ]);
+});
 ```
 
-#### Laravel 10 (App\Http\Kernel.php)
-
+**Without the middleware, authentication will not work:**
 ```php
-namespace App\Http;
-
-use Illuminate\Foundation\Http\Kernel as HttpKernel;
-
-class Kernel extends HttpKernel
-{
-    protected $middlewareAliases = [
-        // ... other middleware
-        'async-select.internal' => \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class,
-    ];
-}
+// ❌ No middleware - authentication won't work
+Route::get('/api/users/search', function () {
+    // auth()->user() will be null even if X-Internal-User header is present
+});
 ```
 
 ### Applying Middleware to Routes
+
+::: warning Important
+**Always apply the `async-auth` middleware to routes that require authentication.** Without it, the internal authentication token will not be verified and users will not be authenticated.
 
 #### Single Route
 
 ```php
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['async-select.internal'])->get('/api/users/search', function () {
-    // User is automatically authenticated via internal auth token
-    $user = auth()->user();
+// ✅ Apply middleware for authentication
+Route::middleware(['async-auth'])->get('/api/users/search', function () {
+    $user = auth()->user(); // Now authenticated
     
     return response()->json([
         'data' => User::where('name', 'like', "%{$request->get('search')}%")
@@ -298,24 +298,57 @@ Route::middleware(['async-select.internal'])->get('/api/users/search', function 
 #### Route Groups
 
 ```php
-Route::middleware(['async-select.internal'])->prefix('api')->group(function () {
+Route::middleware(['async-auth'])->prefix('api')->group(function () {
     Route::get('/users/search', [UserController::class, 'search']);
     Route::get('/users/selected', [UserController::class, 'selected']);
     Route::get('/products/search', [ProductController::class, 'search']);
 });
 ```
 
-#### With Other Middleware
+#### With Guard Specification
 
 ```php
-Route::middleware([
-    'web',
-    'auth:sanctum',
-    'async-select.internal'
-])->group(function () {
+// Use with default guard (web)
+Route::middleware(['async-auth'])->group(function () {
+    Route::get('/api/users/search', [UserController::class, 'search']);
+});
+
+// Use with web guard
+Route::middleware(['async-auth:web'])->group(function () {
+    Route::get('/api/users/search', [UserController::class, 'search']);
+});
+
+// Use with Sanctum
+Route::middleware(['async-auth:sanctum'])->group(function () {
+    Route::get('/api/users/search', [UserController::class, 'search']);
+});
+
+// Use with API guard
+Route::middleware(['async-auth:api'])->group(function () {
+    Route::get('/api/users/search', [UserController::class, 'search']);
+});
+
+// Use with multiple guards (tries first, falls back to second)
+Route::middleware(['async-auth:web,sanctum'])->group(function () {
+    Route::get('/api/users/search', [UserController::class, 'search']);
+});
+
+// Use with custom guard
+Route::middleware(['async-auth:admin'])->group(function () {
+    Route::get('/admin/users/search', [AdminController::class, 'search']);
+});
+```
+
+#### With Session Persistence
+
+```php
+// Persist login in session (requires web middleware group)
+Route::middleware(['web', 'async-auth:web,persist'])->group(function () {
     Route::get('/api/users/search', [UserController::class, 'search']);
 });
 ```
+
+**Note:** The `persist` flag only works with session-based guards (like `web`). It stores the authentication in the session for subsequent requests.
 
 ### Complete Example: Global Configuration
 
@@ -356,51 +389,22 @@ ASYNC_SELECT_USE_INTERNAL_AUTH=true
 ASYNC_SELECT_INTERNAL_SECRET=your-generated-secret-here
 ```
 
-#### Step 3: Register Middleware
+#### Step 3: Apply async-auth Middleware to Routes
 
-**Laravel 11+ (`bootstrap/app.php`):**
-
-```php
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Middleware;
-
-return Application::configure(basePath: dirname(__DIR__))
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'async-select.internal' => \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class,
-        ]);
-    })
-    ->create();
-```
-
-**Laravel 10 (`App\Http\Kernel.php`):**
-
-```php
-namespace App\Http;
-
-use Illuminate\Foundation\Http\Kernel as HttpKernel;
-
-class Kernel extends HttpKernel
-{
-    protected $middlewareAliases = [
-        // ... other middleware
-        'async-select.internal' => \DrPshtiwan\LivewireAsyncSelect\Http\Middleware\InternalAuthenticate::class,
-    ];
-}
-```
-
-#### Step 4: Apply Middleware to Routes
+The `async-auth` middleware is automatically registered by the package. Simply use it in your routes:
 
 ```php
 // routes/api.php or routes/web.php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
-Route::middleware(['async-select.internal'])->group(function () {
+Route::middleware(['async-auth'])->group(function () {
     Route::get('/api/users/search', [UserController::class, 'search']);
     Route::get('/api/users/selected', [UserController::class, 'selected']);
 });
 ```
+
+**Note:** The `async-auth` middleware works exactly like `auth` middleware, but also handles internal authentication automatically when the `X-Internal-User` header is present.
 
 #### Step 5: Create Controller
 
@@ -514,29 +518,149 @@ If you prefer to enable internal auth only for specific components:
 
 ### Using with Laravel Sanctum
 
-If you're using Laravel Sanctum for API authentication, you can combine it with internal auth:
+Simply use `async-auth:sanctum` instead of `auth:sanctum`:
 
 ```php
-Route::middleware([
-    'async-select.internal',
-    'auth:sanctum'
-])->group(function () {
+// API routes with Sanctum
+Route::middleware(['async-auth:sanctum'])->prefix('api')->group(function () {
+    Route::get('/users/search', [UserController::class, 'search']);
+    Route::get('/products/search', [ProductController::class, 'search']);
+});
+```
+
+The `async-auth` middleware automatically handles both internal authentication (when header present) and normal Sanctum authentication (when no header).
+
+**Example Controller:**
+
+```php
+class UserController extends Controller
+{
+    public function search(Request $request)
+    {
+        // User is authenticated via Sanctum token OR internal auth
+        $user = auth()->user(); // Works with both methods
+        
+        $search = $request->get('search', '');
+        
+        $users = User::where('name', 'like', "%{$search}%")
+            ->limit(20)
+            ->get();
+        
+        return response()->json(['data' => $users]);
+    }
+}
+```
+
+### Using with Laravel Web Auth
+
+For web routes, use `async-auth:web`:
+
+```php
+// Web routes with session-based auth
+Route::middleware(['web', 'async-auth:web'])->group(function () {
+    Route::get('/dashboard/users/search', [UserController::class, 'search']);
+});
+```
+
+**With session persistence:**
+
+```php
+// Persist login in session (requires web middleware group)
+Route::middleware(['web', 'async-auth:web,persist'])->group(function () {
     Route::get('/api/users/search', [UserController::class, 'search']);
 });
 ```
 
-The internal auth middleware runs first and authenticates the user, then Sanctum can use that authenticated user.
+The `persist` flag ensures the user login is stored in the session, useful for web applications.
 
-### Using with Laravel Web Auth
+### Using with API Guard
 
-For web routes, combine with web middleware:
+For API-only authentication:
 
 ```php
-Route::middleware([
-    'web',
-    'async-select.internal'
-])->group(function () {
+Route::middleware(['async-auth:api'])->prefix('api')->group(function () {
+    Route::get('/users/search', [UserController::class, 'search']);
+});
+```
+
+### Using with Multiple Guards
+
+Try multiple guards in order (falls back if first fails):
+
+```php
+Route::middleware(['async-auth:web,sanctum'])->group(function () {
+    // Tries web guard first, then sanctum if web fails
     Route::get('/api/users/search', [UserController::class, 'search']);
+});
+```
+
+### Using with Custom Guards
+
+Works with any custom guard you've configured:
+
+```php
+// Custom guard example
+Route::middleware(['async-auth:admin'])->group(function () {
+    Route::get('/admin/users/search', [AdminController::class, 'search']);
+});
+```
+
+### Complete Examples
+
+**Example 1: API Routes with Sanctum**
+
+```php
+// routes/api.php
+Route::middleware(['async-auth:sanctum'])->prefix('api')->group(function () {
+    Route::get('/users/search', function (Request $request) {
+        $users = User::where('name', 'like', "%{$request->get('search')}%")
+            ->limit(20)
+            ->get()
+            ->map(fn($user) => [
+                'value' => $user->id,
+                'label' => $user->name,
+            ]);
+        
+        return response()->json(['data' => $users]);
+    });
+});
+```
+
+**Example 2: Web Routes with Session**
+
+```php
+// routes/web.php
+Route::middleware(['web', 'async-auth:web'])->group(function () {
+    Route::get('/dashboard/users/search', function (Request $request) {
+        $users = User::where('name', 'like', "%{$request->get('search')}%")
+            ->limit(20)
+            ->get()
+            ->map(fn($user) => [
+                'value' => $user->id,
+                'label' => $user->name,
+            ]);
+        
+        return response()->json(['data' => $users]);
+    });
+});
+```
+
+**Example 3: Mixed Authentication (Web + Sanctum)**
+
+```php
+// routes/api.php
+Route::middleware(['async-auth:web,sanctum'])->prefix('api')->group(function () {
+    // Accepts both web session auth and Sanctum tokens
+    Route::get('/users/search', [UserController::class, 'search']);
+});
+```
+
+**Example 4: Admin Routes with Custom Guard**
+
+```php
+// routes/web.php
+Route::middleware(['web', 'async-auth:admin'])->prefix('admin')->group(function () {
+    Route::get('/users/search', [AdminUserController::class, 'search']);
 });
 ```
 
@@ -687,10 +811,11 @@ When internal auth is enabled globally, you can still disable it for specific co
 
 #### Middleware Not Authenticating
 
-- Ensure middleware is registered in `bootstrap/app.php` (Laravel 11+) or `App\Http\Kernel.php` (Laravel 10)
-- Verify middleware is applied to the route
-- Check that the token is being sent in the `X-Internal-User` header
+- The `async-auth` middleware is automatically registered - no manual setup needed
+- Verify middleware is applied to the route: `Route::middleware(['async-auth'])`
+- Check that the token is being sent in the `X-Internal-User` header (if using internal auth)
 - Verify the secret matches between token generation and verification
+- If no internal header is present, `async-auth` works exactly like `auth` middleware
 
 #### Authorization Header Removed
 
