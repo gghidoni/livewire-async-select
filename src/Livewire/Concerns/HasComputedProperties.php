@@ -152,11 +152,12 @@ trait HasComputedProperties
     public function getImageSizeClassProperty(): string
     {
         return match ($this->imageSize) {
-            'sm' => 'h-4 w-4',
-            'md' => 'h-6 w-6',
-            'lg' => 'h-8 w-8',
-            'xl' => 'h-10 w-10',
-            default => 'h-6 w-6',
+            'sm' => $this->ui === 'bootstrap' ? 'h-4 w-4' : 'h-4 w-4',
+            'md' => $this->ui === 'bootstrap' ? 'h-6 w-6' : 'h-6 w-6',
+            'lg' => $this->ui === 'bootstrap' ? 'h-8 w-8' : 'h-8 w-8',
+            'xl' => $this->ui === 'bootstrap' ? 'h-10 w-10' : 'h-12 w-12',
+            default => $this->ui === 'bootstrap' ? 'h-8 w-8' : 'h-8 w-8',
+   
         };
     }
 

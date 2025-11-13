@@ -125,7 +125,7 @@
 
 /* RTL Flexbox Adjustments */
 .las-rtl .las-flex {
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 .las-rtl .las-flex.las-flex-col {
@@ -133,7 +133,7 @@
 }
 
 .las-rtl .las-flex.las-flex-row {
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 /* RTL Border Radius */
@@ -581,4 +581,516 @@
 #las-ui-bootstrap img.las-shrink-0,
 #las-ui-bootstrap img.shrink-0 {
   flex-shrink: 0 !important;
+}
+
+/* ============================================
+   Bootstrap-Specific Styles
+   ============================================ */
+
+/* Bootstrap Async Select Container */
+.async-select-bootstrap,
+#las-ui-bootstrap {
+  position: relative;
+  width: 100%;
+}
+
+/* Prevent Tailwind styles from interfering with Bootstrap */
+.async-select-bootstrap *,
+#las-ui-bootstrap * {
+  box-sizing: border-box;
+}
+
+/* Bootstrap Input Group Styling */
+.async-select-bootstrap .async-select-input-group.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+  background: var(--bs-body-bg);
+}
+
+/* Bootstrap Trigger (form-control) */
+.async-select-bootstrap .async-select-trigger.form-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 38px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-gray-300);
+  border-radius: 0.375rem;
+  border-left: 0;
+  border-right: 1px solid var(--bs-gray-300);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.async-select-bootstrap:not([dir="rtl"]) .async-select-trigger.form-control {
+  border-right: 0;
+  border-left: 1px solid var(--bs-gray-300);
+}
+
+.async-select-bootstrap .async-select-trigger.form-control:focus {
+}
+
+.async-select-bootstrap .async-select-trigger.form-control:focus-within {
+}
+
+/* Bootstrap Input Group Text (Actions) */
+.async-select-bootstrap .async-select-actions.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: inherit;
+  text-align: center;
+  white-space: nowrap;
+  background-color: inherit;
+  border: 1px solid inherit;
+  border-left: 0;
+}
+
+.async-select-bootstrap .async-select-actions .btn-close {
+  opacity: 0.5;
+  color: inherit;
+}
+
+.async-select-bootstrap .async-select-actions .btn-close:hover {
+  opacity: 0.75;
+  color: inherit;
+}
+
+.async-select-bootstrap .async-select-actions .btn-link {
+  color: inherit !important;
+  text-decoration: none;
+}
+
+.async-select-bootstrap .async-select-actions .btn-link:hover {
+  color: inherit !important;
+  opacity: 0.75;
+}
+
+.async-select-bootstrap .async-select-actions .async-select-chevron {
+  color: inherit;
+}
+
+/* Bootstrap Input Group - ensure proper border connections */
+/* Bootstrap automatically handles borders, but we ensure proper connections for our structure */
+.async-select-bootstrap:not([dir="rtl"]) .input-group > .form-control + .input-group-text {
+  border-left: 0 !important;
+}
+
+.async-select-bootstrap:not([dir="rtl"]) .input-group > .input-group-text + .btn {
+  border-left: 0 !important;
+}
+
+/* LTR: Form-control should have rounded left corners when first */
+.async-select-bootstrap:not([dir="rtl"]) .input-group > .form-control:first-child {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* LTR: Input-group-text should have rounded right corners when last */
+.async-select-bootstrap:not([dir="rtl"]) .input-group > .input-group-text:last-child {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+/* LTR: Suffix button should have rounded right corners when last */
+.async-select-bootstrap:not([dir="rtl"]) .input-group > .btn:last-child {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Ensure btn-close is visible in Bootstrap */
+.async-select-bootstrap .btn-close,
+#las-ui-bootstrap .btn-close {
+  display: inline-block !important;
+  width: 1em;
+  height: 1em;
+  padding: 0.25em 0.25em;
+  margin: 0;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  border: 0;
+  border-radius: 0.375rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.async-select-bootstrap .btn-close:hover,
+#las-ui-bootstrap .btn-close:hover {
+  opacity: 0.75;
+}
+
+.async-select-bootstrap .btn-close:focus,
+#las-ui-bootstrap .btn-close:focus {
+  opacity: 1;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.async-select-bootstrap .btn-close-white,
+#las-ui-bootstrap .btn-close-white {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Bootstrap Suffix Button */
+.async-select-bootstrap .async-select-suffix-button,
+#las-ui-bootstrap .async-select-suffix-button {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  white-space: nowrap;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.async-select-bootstrap .async-select-suffix-button:hover,
+#las-ui-bootstrap .async-select-suffix-button:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.async-select-bootstrap .async-select-suffix-button:focus,
+#las-ui-bootstrap .async-select-suffix-button:focus {
+  z-index: 3;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Bootstrap Chip/Badge Styling */
+.async-select-bootstrap .async-select-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35em 0.65em;
+  font-size: 0.875em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem;
+}
+
+.async-select-bootstrap .async-select-chip .btn-close {
+  padding: 0.25em 0.5em;
+  font-size: 0.875em;
+}
+
+/* Bootstrap Dropdown */
+.async-select-bootstrap .async-select-dropdown {
+  position: absolute;
+  z-index: 1050;
+  display: block;
+  width: 100%;
+  padding: 0.25rem;
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  color: inherit;
+  text-align: left;
+  list-style: none;
+  background-color: var(--bs-body-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--bs-gray-300);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  max-height: 300px;
+  overflow: hidden;
+}
+
+/* Bootstrap Options Container */
+.async-select-bootstrap .async-select-options.list-group {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 0;
+  border-radius: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.async-select-bootstrap .async-select-options.list-group-flush {
+  border-radius: 0;
+}
+
+/* Bootstrap Option Item */
+.async-select-bootstrap .async-select-option.list-group-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  color: inherit;
+  text-decoration: none;
+
+  gap: 0.5rem;
+}
+
+.async-select-bootstrap .async-select-option.list-group-item:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.async-select-bootstrap .async-select-option.list-group-item:last-child {
+  border-bottom-right-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+.async-select-bootstrap .async-select-option.list-group-item-action  .form-check-input:disabled{
+  opacity: 1 !important;
+}
+.async-select-bootstrap .async-select-option.list-group-item-action {
+  width: 100%;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  border-color:transparent;
+}
+
+.async-select-bootstrap .async-select-option.list-group-item-action:hover,
+.async-select-bootstrap .async-select-option.list-group-item-action:focus {
+  z-index: 1;
+  color: var(--bs-component-hover-color, var(--bs-primary));
+  text-decoration: none;
+  background-color: var(--bs-component-hover-bg, var(--bs-light));
+}
+
+.async-select-bootstrap .async-select-option.list-group-item-action.active {
+  z-index: 2;
+  background-color: var(--bs-component-hover-bg, var(--bs-light));
+  border-color:transparent;
+
+}
+
+.async-select-bootstrap .async-select-option.list-group-item.disabled,
+.async-select-bootstrap .async-select-option.list-group-item:disabled {
+  color: inherit;
+  pointer-events: none;
+  background-color: inherit;
+  opacity: 0.65;
+}
+
+/* Bootstrap Form Control Small (for search in dropdown) */
+.async-select-bootstrap .async-select-dropdown .form-control-sm {
+  min-height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+}
+
+/* Bootstrap Spinner */
+.async-select-bootstrap .spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+}
+
+/* Bootstrap Invalid Feedback */
+.async-select-bootstrap .invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: inherit;
+}
+
+/* RTL Support for Input Group */
+.async-select-bootstrap[dir="rtl"] .input-group,
+#las-ui-bootstrap[dir="rtl"] .input-group {
+  flex-direction: row;
+}
+
+/* RTL: Form-control should have rounded right corners (visual left) */
+.async-select-bootstrap[dir="rtl"] .input-group > .form-control:first-child,
+#las-ui-bootstrap[dir="rtl"] .input-group > .form-control:first-child {
+  border-top-right-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* RTL: Input-group-text connections - should be on the left of form-control */
+.async-select-bootstrap[dir="rtl"] .input-group > .form-control + .input-group-text,
+#las-ui-bootstrap[dir="rtl"] .input-group > .form-control + .input-group-text {
+  border-right: 0 !important;
+  border-left: 1px solid var(--bs-gray-300) !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* RTL: Input-group-text when it's last (no suffix button) */
+.async-select-bootstrap[dir="rtl"] .input-group > .input-group-text:last-child,
+#las-ui-bootstrap[dir="rtl"] .input-group > .input-group-text:last-child {
+  border-top-left-radius: 0.375rem !important;
+  border-bottom-left-radius: 0.375rem !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* RTL: Suffix button connections */
+.async-select-bootstrap[dir="rtl"] .input-group > .input-group-text + .btn,
+#las-ui-bootstrap[dir="rtl"] .input-group > .input-group-text + .btn {
+  border-right: 0 !important;
+  border-left: 1px solid inherit !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* RTL: Suffix button when last */
+.async-select-bootstrap[dir="rtl"] .input-group > .btn:last-child,
+#las-ui-bootstrap[dir="rtl"] .input-group > .btn:last-child {
+  border-top-left-radius: 0.375rem !important;
+  border-bottom-left-radius: 0.375rem !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* RTL Support for Bootstrap */
+.async-select-bootstrap[dir="rtl"],
+#las-ui-bootstrap[dir="rtl"] {
+  direction: rtl;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-trigger,
+#las-ui-bootstrap[dir="rtl"] .async-select-trigger {
+  text-align: right;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-trigger input,
+#las-ui-bootstrap[dir="rtl"] .async-select-trigger input {
+  text-align: right;
+  direction: rtl;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-trigger input::placeholder,
+#las-ui-bootstrap[dir="rtl"] .async-select-trigger input::placeholder {
+  text-align: right;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-option,
+#las-ui-bootstrap[dir="rtl"] .async-select-option {
+  text-align: right;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-chip,
+#las-ui-bootstrap[dir="rtl"] .async-select-chip {
+  direction: rtl;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-dropdown,
+#las-ui-bootstrap[dir="rtl"] .async-select-dropdown {
+  text-align: right;
+  direction: rtl;
+  background-color: var(--bs-body-bg);
+}
+
+/* RTL: Chip margins */
+.async-select-bootstrap[dir="rtl"] .async-select-chip.me-1,
+#las-ui-bootstrap[dir="rtl"] .async-select-chip.me-1 {
+  margin-right: 0 !important;
+  margin-left: 0.25rem !important;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-chip.ms-1,
+#las-ui-bootstrap[dir="rtl"] .async-select-chip.ms-1 {
+  margin-left: 0 !important;
+  margin-right: 0.25rem !important;
+}
+
+/* RTL: Flex gap adjustments */
+.async-select-bootstrap[dir="rtl"] .async-select-chip[style*="gap"],
+#las-ui-bootstrap[dir="rtl"] .async-select-chip[style*="gap"] {
+  flex-direction: row;
+}
+
+/* RTL: Input group text gap - reverse order of buttons */
+.async-select-bootstrap[dir="rtl"] .async-select-actions.input-group-text,
+#las-ui-bootstrap[dir="rtl"] .async-select-actions.input-group-text {
+  flex-direction: row;
+}
+
+/* RTL: Ensure proper border connections when input-group is reversed */
+.async-select-bootstrap[dir="rtl"] .input-group > .form-control:first-child + .input-group-text,
+#las-ui-bootstrap[dir="rtl"] .input-group > .form-control:first-child + .input-group-text {
+  border-right: 0 !important;
+}
+
+.async-select-bootstrap[dir="rtl"] .input-group > .input-group-text:first-child + .btn,
+#las-ui-bootstrap[dir="rtl"] .input-group > .input-group-text:first-child + .btn {
+  border-right: 0 !important;
+  border-left: 1px solid inherit !important;
+}
+
+/* RTL: Form check input margins */
+.async-select-bootstrap[dir="rtl"] .async-select-option .form-check-input.me-2,
+#las-ui-bootstrap[dir="rtl"] .async-select-option .form-check-input.me-2 {
+  margin-right: 0 !important;
+  margin-left: 0.5rem !important;
+}
+
+.async-select-bootstrap[dir="rtl"] .async-select-option .form-check-input.ms-2,
+#las-ui-bootstrap[dir="rtl"] .async-select-option .form-check-input.ms-2 {
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+}
+
+/* Remove duplicate border radius rules - Bootstrap handles this */
+
+/* Ensure proper z-index for dropdown */
+.async-select-bootstrap .async-select-dropdown {
+  z-index: 1050 !important;
+}
+
+/* Prevent Bootstrap form-control from interfering */
+.async-select-bootstrap .async-select-trigger.form-control input {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.async-select-bootstrap .async-select-trigger.form-control input:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Ensure chips don't break layout */
+.async-select-bootstrap .async-select-trigger.form-control {
+  gap: 0.25rem;
+}
+
+/* Fix for Bootstrap list-group-item-secondary (group headers) */
+.async-select-bootstrap .list-group-item-secondary {
+  color: inherit;
+  background-color: inherit;
+}
+
+/* Ensure proper spacing in options */
+.async-select-bootstrap:not([dir="rtl"]) .async-select-option .form-check-input {
+  margin-top: 0;
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+/* Fix for text truncation in Bootstrap */
+.async-select-bootstrap .text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
