@@ -38,6 +38,7 @@ test('sends headers with API request', function () {
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -70,7 +71,7 @@ test('sends headers with API request', function () {
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->toHaveKey('Authorization');

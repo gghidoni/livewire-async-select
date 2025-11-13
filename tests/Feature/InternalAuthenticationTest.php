@@ -21,6 +21,7 @@ test('AsyncSelect adds internal auth header when useInternalAuth is enabled', fu
         // Record ALL requests to ensure we catch them
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -53,6 +54,7 @@ test('AsyncSelect uses global config for useInternalAuth when not provided', fun
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -73,7 +75,7 @@ test('AsyncSelect uses global config for useInternalAuth when not provided', fun
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->toHaveKey('X-Internal-User');
@@ -88,6 +90,7 @@ test('AsyncSelect does not add internal auth header for external endpoints', fun
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -109,7 +112,7 @@ test('AsyncSelect does not add internal auth header for external endpoints', fun
     $externalRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), 'external-api.com/users');
     });
-    
+
     expect($externalRequest)->not()->toBeNull();
     $request = $externalRequest[0];
     expect($request->headers())->not()->toHaveKey('X-Internal-User');
@@ -123,6 +126,7 @@ test('AsyncSelect does not add internal auth header when useInternalAuth is fals
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -144,7 +148,7 @@ test('AsyncSelect does not add internal auth header when useInternalAuth is fals
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->not()->toHaveKey('X-Internal-User');
@@ -157,6 +161,7 @@ test('AsyncSelect does not add internal auth header when user is not authenticat
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -178,7 +183,7 @@ test('AsyncSelect does not add internal auth header when user is not authenticat
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->not()->toHaveKey('X-Internal-User');
@@ -194,6 +199,7 @@ test('AsyncSelect does not add internal auth header when secret is not configure
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -215,7 +221,7 @@ test('AsyncSelect does not add internal auth header when secret is not configure
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->not()->toHaveKey('X-Internal-User');
@@ -229,6 +235,7 @@ test('AsyncSelect preserves custom headers when adding internal auth', function 
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -254,7 +261,7 @@ test('AsyncSelect preserves custom headers when adding internal auth', function 
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->not()->toHaveKey('Authorization');
@@ -270,6 +277,7 @@ test('AsyncSelect removes Authorization header when useInternalAuth is enabled',
     Http::fake(function ($request) use (&$recordedRequests) {
         $response = Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -294,7 +302,7 @@ test('AsyncSelect removes Authorization header when useInternalAuth is enabled',
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->not()->toHaveKey('Authorization');
@@ -312,6 +320,7 @@ test('AsyncSelect adds internal auth header for selectedEndpoint requests', func
             ? Http::response(['data' => [['id' => '2', 'name' => 'User 2']]])
             : Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -511,6 +520,7 @@ test('middleware works with AsyncSelect making requests to protected routes', fu
                 : Http::response([], 401))
             : Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -534,7 +544,7 @@ test('middleware works with AsyncSelect making requests to protected routes', fu
     $apiUsersRequest = collect($recordedRequests)->first(function ($interaction) {
         return str_contains($interaction[0]->url(), '/api/users');
     }) ?: $recordedRequests[0];
-    
+
     expect($apiUsersRequest)->not()->toBeNull();
     $request = $apiUsersRequest[0];
     expect($request->headers())->toHaveKey('X-Internal-User');

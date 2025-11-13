@@ -70,6 +70,7 @@ test('loads options from a remote endpoint and resolves selected labels', functi
             ])
             : Http::response(['data' => []]);
         $recordedRequests[] = [$request, $response];
+
         return $response;
     });
 
@@ -105,14 +106,16 @@ test('loads options from a remote endpoint and resolves selected labels', functi
 
     // Filter requests that contain 'Remote' in the search parameter
     $searchRequests = array_filter($recordedRequests, function ($interaction) {
-        if (!isset($interaction[0]) || !is_object($interaction[0])) {
+        if (! isset($interaction[0]) || ! is_object($interaction[0])) {
             return false;
         }
         $request = $interaction[0];
         if (method_exists($request, 'data')) {
             $data = $request->data();
+
             return ($data['search'] ?? null) === 'Remote';
         }
+
         return false;
     });
 
