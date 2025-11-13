@@ -98,6 +98,8 @@ class AsyncSelect extends Component
 
     public array $valueLabels = [];
 
+    public bool $searchable = true;
+
     public function mount(
         array|int|string|null $value = null,
         array|Collection $options = [],
@@ -128,6 +130,7 @@ class AsyncSelect extends Component
         ?string $suffixButtonIcon = null,
         ?string $suffixButtonAction = null,
         array $valueLabels = [],
+        bool $searchable = true,
     ): void {
         $this->endpoint = $endpoint;
         $this->multiple = $multiple;
@@ -157,6 +160,7 @@ class AsyncSelect extends Component
         $this->locale = $locale ?? app()->getLocale();
         $this->configureRtl();
         $this->placeholder = $placeholder ?: __('async-select::async-select.select_option');
+        $this->searchable = $searchable;
 
         $this->setOptions($options);
         $this->processValueLabels();

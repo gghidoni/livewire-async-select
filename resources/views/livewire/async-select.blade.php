@@ -307,6 +307,7 @@
                     @endforeach
 
                     {{-- Search Input for Multiple --}}
+                    @if ($this->searchable)
                     <input
                         x-ref="search"
                         type="text"
@@ -316,6 +317,7 @@
                         x-on:click="openDropdown()"
                         autocomplete="off"
                     >
+                    @endif
                 @else
                     {{-- Single Select Display --}}
                     @if ($this->hasSelection)
@@ -327,6 +329,7 @@
                             <span class="las-flex-1 las-truncate las-text-base las-text-gray-900">{{ $selectedOptions[0]['label'] }}</span>
                         @endif
                     @else
+                        @if ($this->searchable)
                         <input
                             x-ref="search"
                             type="text"
@@ -336,6 +339,7 @@
                             x-on:click="openDropdown()"
                             autocomplete="off"
                         >
+                        @endif
                     @endif
                 @endif
             </div>
@@ -405,7 +409,7 @@
             class="las-absolute las-left-0 las-right-0 las-z-50 las-mt-2 las-rounded-md las-bg-white las-border las-border-gray-200 las-p-1 las-text-gray-900 las-shadow-lg las-outline-none"
         >
             {{-- Search Box (for single select when open) --}}
-            @if (! $this->multiple && $this->hasSelection)
+            @if (! $this->multiple && $this->hasSelection && $this->searchable)
                 <div class="las-mb-1 las-px-1">
                     <input
                         x-ref="searchDropdown"

@@ -33,6 +33,7 @@ Complete reference for all component properties and methods.
 | `tags` | boolean | false | Enable tag creation |
 | `autoload` | boolean | false | Load options on mount |
 | `disabled` | boolean | false | Disable the component |
+| `searchable` | boolean | true | Enable search functionality. When `false`, search input fields are hidden and filtering is disabled |
 
 ### Search Configuration
 

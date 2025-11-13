@@ -218,6 +218,24 @@ Allow users to create custom options:
 />
 ```
 
+### Disable Search
+
+When you have a small, fixed list of options and don't need search functionality:
+
+```html
+<livewire:async-select
+    wire:model="category"
+    :options="$categories"
+    :searchable="false"
+    placeholder="Select a category..."
+/>
+```
+
+When `searchable` is `false`:
+- Search input fields are hidden
+- All options are displayed without filtering
+- Useful for small dropdowns with limited options
+
 ### With Extra Parameters
 
 Pass additional parameters to your endpoint:

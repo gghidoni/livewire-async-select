@@ -268,7 +268,7 @@
                             ></button>
                         </span>
                     @endforeach
-
+                    @if ($this->searchable)
                     <input
                         x-ref="search"
                         type="text"
@@ -279,6 +279,7 @@
                         x-on:click="openDropdown()"
                         autocomplete="off"
                     >
+                    @endif
                 @else
                     @if ($this->hasSelection)
                         @if ($selectedSlot ?? false)
@@ -287,6 +288,7 @@
                             <span class="text-truncate" style="flex: 1 1 auto;">{{ $selectedOptions[0]['label'] }}</span>
                         @endif
                     @else
+                        @if ($this->searchable)
                         <input
                             x-ref="search"
                             type="text"
@@ -297,6 +299,7 @@
                             x-on:click="openDropdown()"
                             autocomplete="off"
                         >
+                        @endif
                     @endif
                 @endif
             </div>
@@ -372,7 +375,7 @@
             class="async-select-dropdown position-absolute w-100 mt-1 rounded border shadow-lg"
             style="z-index: 1050; top: 100%; left: 0; right: 0;"
         >
-            @if (! $this->multiple && $this->hasSelection)
+            @if (! $this->multiple && $this->hasSelection && $this->searchable)
                 <div class="mb-1 px-1">
                     <input
                         x-ref="searchDropdown"

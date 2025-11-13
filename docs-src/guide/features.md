@@ -39,6 +39,7 @@ Real-time search through local or remote options.
 - Server-side search for remote data
 - Configurable minimum length
 - Debounced input
+- Disable search with `:searchable="false"` for small option lists
 
 ## 🎯 Multiple Selection
 
