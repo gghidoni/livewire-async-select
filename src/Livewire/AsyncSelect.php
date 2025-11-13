@@ -299,8 +299,8 @@ class AsyncSelect extends Component
 
     public function render()
     {
-        $viewName = $this->ui === 'bootstrap' ? 'async-select-bootstrap' : 'async-select';
-        
+        $viewName = $this->ui === 'tailwind' ? 'async-select' : 'async-select-'.$this->ui;
+
         return view("async-select::livewire.{$viewName}");
     }
 }

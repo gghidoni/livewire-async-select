@@ -87,7 +87,7 @@ return [
     | or :ui="bootstrap".
     |
     */
-    'ui' => env('ASYNC_SELECT_UI', 'bootstrap'),
+    'ui' => env('ASYNC_SELECT_UI', 'tailwind'),
 
     /*
     |--------------------------------------------------------------------------

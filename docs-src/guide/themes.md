@@ -8,6 +8,17 @@ The component supports two UI themes:
 - **Tailwind** (default) - Modern, clean design using Tailwind CSS
 - **Bootstrap** - Classic Bootstrap styling
 
+### How Views Are Loaded
+
+The component automatically loads the appropriate view based on the `ui` property:
+
+- When `ui="tailwind"` (or not specified), it loads: `async-select::livewire.async-select`
+- When `ui="bootstrap"`, it loads: `async-select::livewire.async-select-bootstrap`
+
+The view files are located in:
+- `resources/views/livewire/async-select.blade.php` (Tailwind theme)
+- `resources/views/livewire/async-select-bootstrap.blade.php` (Bootstrap theme)
+
 ### Setting the Theme
 
 You can set the theme per-component:
@@ -103,14 +114,41 @@ Publish the views to customize the structure:
 php artisan vendor:publish --tag=async-select-views
 ```
 
-This publishes the Blade template to:
+This publishes all view templates to:
 ```
-resources/views/vendor/async-select/livewire/async-select.blade.php
+resources/views/vendor/async-select/livewire/
+├── async-select.blade.php          (Tailwind theme)
+└── async-select-bootstrap.blade.php (Bootstrap theme)
 ```
 
-You can then modify the HTML structure while keeping the `las-` prefixed classes for consistent styling.
+Once published, Laravel will automatically use your published views instead of the package views. You can then modify the HTML structure for each theme independently.
 
-### Option 3: Override Specific Styles
+**Note:** When you publish views, both theme files are published. Modify the one that matches your `ui` setting, or customize both if you use multiple themes in your application.
+
+### Option 3: Create a Custom Theme
+
+You can create your own custom theme by following the view naming convention:
+
+1. **Create your custom view file:**
+   ```
+   resources/views/vendor/async-select/livewire/async-select-mytheme.blade.php
+   ```
+
+2. **Use your custom theme:**
+   ```html
+   <livewire:async-select :options="$options" ui="mytheme" />
+   ```
+
+The component's `render()` method will automatically load `async-select::livewire.async-select-mytheme` when `ui="mytheme"` is specified.
+
+**View Loading Logic:**
+- If `ui="tailwind"`, loads: `async-select::livewire.async-select`
+- If `ui="bootstrap"`, loads: `async-select::livewire.async-select-bootstrap`
+- If `ui="mytheme"`, loads: `async-select::livewire.async-select-mytheme`
+
+**Tip:** Start by copying one of the existing theme files (`async-select.blade.php` or `async-select-bootstrap.blade.php`) as a template for your custom theme.
+
+### Option 4: Override Specific Styles
 
 Add custom CSS to override specific styles:
 

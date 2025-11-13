@@ -1,34 +1,5 @@
-@php use Illuminate\Support\Js; @endphp
-
-{{--
-    Bootstrap View for AsyncSelect Component
-    
-    This view uses Bootstrap classes and can be customized using the ID selector:
-    
-    Example custom styles:
-    <style>
-        #las-ui-bootstrap .async-select-trigger {
-            border-color: #your-color;
-        }
-        
-        #las-ui-bootstrap .async-select-chip {
-            background-color: #your-color;
-        }
-        
-        #las-ui-bootstrap .async-select-option.active {
-            background-color: #your-color;
-        }
-    </style>
-    
-    Or target all Bootstrap async-select components:
-    <style>
-        .async-select-bootstrap .async-select-trigger {
-            /* your styles */
-        }
-    </style>
---}}
-
 @php
+    use Illuminate\Support\Js;
     $selectedOptions = $this->selectedOptions;
     $selectedValues = collect($selectedOptions)
         ->pluck('value')

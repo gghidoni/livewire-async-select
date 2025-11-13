@@ -157,7 +157,7 @@ trait HasComputedProperties
             'lg' => $this->ui === 'bootstrap' ? 'h-8 w-8' : 'h-8 w-8',
             'xl' => $this->ui === 'bootstrap' ? 'h-10 w-10' : 'h-12 w-12',
             default => $this->ui === 'bootstrap' ? 'h-8 w-8' : 'h-8 w-8',
-   
+
         };
     }
 
